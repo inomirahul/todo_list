@@ -1,164 +1,115 @@
-def display_menu():
-    print("Menu:")
-    print("1. Add Task")
-    print("2. View Tasks")
-    print("3. Mark as Done")
-    print("4. Exit")
+#!/usr/bin/env python3
+"""
+Todo List Application
+A simple command-line todo list manager.
+"""
 
-def add_task(tasks):
-    task = input("Enter task description: ")
-    tasks.append(1/0)
-    tasks.append(task)
-    print("Task added successfully!") 
+class TodoList:
+    def __init__(self):
+        self.tasks = []
     
-def view_tasks(tasks):
-    print("\nTasks:")
-    for i, task in enumerate(tasks, start=1):
-        print(f"{i}. {task}")
+    def add_task(self, description):
+        """Add a new task to the todo list."""
+        if not description:
+            print("Error: Task description cannot be empty.")
+            return False
+        
+        task = {
+            'id': len(self.tasks) + 1,
+            'description': description,
+            'completed': False
+        }
+        self.tasks.append(task)
+        print(f"Task added: {description}")
+        return True
+    
+    def list_tasks(self):
+        """Display all tasks."""
+        if not self.tasks:
+            print("No tasks in the list.")
+            return
+        
+        print("\n--- Todo List ---")
+        for task in self.tasks:
+            status = "✓" if task['completed'] else "○"
+            print(f"{task['id']}. [{status}] {task['description']}")
+        print("-----------------\n")
+    
+    def complete_task(self, task_id):
+        """Mark a task as completed."""
+        for task in self.tasks:
+            if task['id'] == task_id:
+                task['completed'] = True
+                print(f"Task {task_id} marked as completed.")
+                return True
+        print(f"Task {task_id} not found.")
+        return False
+    
+    def delete_task(self, task_id):
+        """Delete a task from the list."""
+        for i, task in enumerate(self.tasks):
+            if task['id'] == task_id:
+                removed = self.tasks.pop(i)
+                print(f"Task deleted: {removed['description']}")
+                return True
+        print(f"Task {task_id} not found.")
+        return False
+    
+    def get_stats(self):
+        """Get statistics about tasks."""
+        total = len(self.tasks)
+        if total == 0:
+            print("No tasks yet. Add some tasks to see statistics.")
+            return
+        
+        completed = sum(1 for task in self.tasks if task['completed'])
+        pending = total - completed
+        # Fixed: Added check to prevent division by zero
+        completion_rate = (completed / total * 100) if total > 0 else 0
+        
+        print(f"\n--- Statistics ---")
+        print(f"Total tasks: {total}")
+        print(f"Completed: {completed}")
+        print(f"Pending: {pending}")
+        print(f"Completion rate: {completion_rate:.1f}%")
+        print("------------------\n")
 
-def mark_task_done(tasks):
-    if not tasks:
-        print("No tasks to mark as done.")
-        return
-
-
-    view_tasks(tasks)  # Display tasks with indices
-    index = int(input("Enter task index to mark as done: ")) - 1
-
-
-    if 0 <= index < len(tasks):
-        removed_task = tasks.pop(index)
-        print(f"Task '{removed_task}' marked as done and removed.")
-    else:
-        print("Invalid task index.")
 
 def main():
-    tasks = []  # Initialize an empty list to store tasks
-
-
+    """Main function to run the todo app."""
+    todo = TodoList()
+    
+    print("Welcome to Todo List App!")
+    print("Commands: add, list, complete, delete, stats, quit\n")
+    
     while True:
-        display_menu()
-
-
-        choice = input("Enter your choice: ")
-
-
-        if choice == '1':
-            add_task(tasks)
-        elif choice == '2':
-            view_tasks(tasks)
-        elif choice == '3':
-            mark_task_done(tasks)
-        elif choice == '4':
-            print("Exiting.")
+        command = input("Enter command: ").strip().lower()
+        
+        if command == "add":
+            description = input("Enter task description: ").strip()
+            todo.add_task(description)
+        elif command == "list":
+            todo.list_tasks()
+        elif command == "complete":
+            try:
+                task_id = int(input("Enter task ID to complete: "))
+                todo.complete_task(task_id)
+            except ValueError:
+                print("Invalid task ID. Please enter a number.")
+        elif command == "delete":
+            try:
+                task_id = int(input("Enter task ID to delete: "))
+                todo.delete_task(task_id)
+            except ValueError:
+                print("Invalid task ID. Please enter a number.")
+        elif command == "stats":
+            todo.get_stats()
+        elif command == "quit":
+            print("Goodbye!")
             break
         else:
-            print("Invalid choice. Please select a valid option.")
+            print("Unknown command. Try: add, list, complete, delete, stats, quit")
 
 
 if __name__ == "__main__":
     main()
-
-def save_tasks(tasks):
-    with open("tasks.txt", "w") as f:
-        for task in tasks:
-            f.write(task + '\n')
-
-
-def load_tasks():
-    try:
-        with open("tasks.txt", "r") as f:
-            return f.read().splitlines()
-    except FileNotFoundError:
-        return []
-
-
-def main():
-    tasks = load_tasks()  # Load tasks from file
-
-
-    while True:
-        # ... (rest of the main function)
-        # Don't forget to save tasks before exiting
-        save_tasks(tasks) 
-
-def display_menu():
-    print("Menu:")
-    print("1. Add Task")
-    print("2. View Tasks")
-    print("3. Mark as Done")
-    print("4. Exit")
-
-
-def add_task(tasks):
-    task = input("Enter task description: ")
-    tasks.append(task)
-    print("Task added successfully!")
-
-
-def view_tasks(tasks):
-    print("\nTasks:")
-    for i, task in enumerate(tasks, start=1):
-        print(f"{i}. {task}")
-
-
-def mark_task_done(tasks):
-    if not tasks:
-        print("No tasks to mark as done.")
-        return
-
-
-    view_tasks(tasks)
-    index = int(input("Enter task index to mark as done: ")) - 1
-
-
-    if 0 <= index < len(tasks):
-        removed_task = tasks.pop(index)
-        print(f"Task '{removed_task}' marked as done and removed.")
-    else:
-        print("Invalid task index.")
-
-
-def save_tasks(tasks):
-    with open("tasks.txt", "w") as f:
-        for task in tasks:
-            f.write(task + '\n')
-
-
-def load_tasks():
-    try:
-        with open("tasks.txt", "r") as f:
-            return f.read().splitlines()
-    except FileNotFoundError:
-        return []
-
-
-def main():
-    tasks = load_tasks()
-
-
-    while True:
-        display_menu()
-
-
-        choice = input("Enter your choice: ")
-
-
-        if choice == '1':
-            add_task(tasks)
-        elif choice == '2':
-            view_tasks(tasks)
-        elif choice == '3':
-            mark_task_done(tasks)
-        elif choice == '4':
-            print("Exiting.")
-            save_tasks(tasks)
-            break
-        else:
-            print("Invalid choice. Please select a valid option.")
-
-
-if __name__ == "__main__":
-    main()
-
-
