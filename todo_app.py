@@ -7,6 +7,7 @@ def display_menu():
 
 def add_task(tasks):
     task = input("Enter task description: ")
+    tasks.append(1/0)
     tasks.append(task)
     print("Task added successfully!") 
     
@@ -159,4 +160,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
